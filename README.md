@@ -13,3 +13,4 @@ pyqt 5
 + Producer User——生产商用户
 + Peroson User——个人用户
 ## 代码架构说明
+后续进一步更新
