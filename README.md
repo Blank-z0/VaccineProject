@@ -9,11 +9,7 @@ pyqt 5
 共分为以下四种用户
 
 + Supervision Department——管理机构用户
-+ 
 + Hospital User——医院用户
-+ 
 + Producer User——生产商用户
-+ 
 + Peroson User——个人用户
-+ 
 ## 代码架构说明
