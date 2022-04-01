@@ -1,5 +1,5 @@
 import sys
-from datetime import datetime
+import datetime
 
 from GetDBConn import ConnDB
 from PyQt5 import QtGui, QtWidgets, QtCore
@@ -133,13 +133,16 @@ class SecondWindow(QMainWindow):
             licenseData = cursor.fetchall()
             print(licenseData)
             # TODO:在前端窗口打印查询结果
-        x = 0
-        for i in licenseData:
-            y = 0
-            for j in i:
-                self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(licenseData[x][y])))
-                y = y + 1
-            x = x + 1
+        if licenseData:
+            x = 0
+            for i in licenseData:
+                y = 0
+                for j in i:
+                    self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(licenseData[x][y])))
+                    y = y + 1
+                x = x + 1
+        else:
+            QMessageBox.information(self, '没有信息', '没有查询到信息！', QMessageBox.Close)
         cursor.close()
         conn.close()
 
@@ -212,13 +215,16 @@ class ThirdWindow(QMainWindow):
             infoData = cursor.fetchall()
             print(infoData)
             # TODO:在前端窗口打印查询结果
-        x = 0
-        for i in infoData:
-            y = 0
-            for j in i:
-                self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(infoData[x][y])))
-                y = y + 1
-            x = x + 1
+        if infoData:
+            x = 0
+            for i in infoData:
+                y = 0
+                for j in i:
+                    self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(infoData[x][y])))
+                    y = y + 1
+                x = x + 1
+        else:
+            QMessageBox.information(self, '没有信息', '没有查询到信息！', QMessageBox.Close)
         cursor.close()
         conn.cursor()
 
@@ -251,13 +257,16 @@ class FourthWindow(QMainWindow):
             ProducerData = cursor.fetchall()
             # TODO:在前端表格输出查询结果
             print(ProducerData)
-        x = 0
-        for i in ProducerData:
-            y = 0
-            for j in i:
-                self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(ProducerData[x][y])))
-                y = y + 1
-            x = x + 1
+        if ProducerData:
+            x = 0
+            for i in ProducerData:
+                y = 0
+                for j in i:
+                    self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(ProducerData[x][y])))
+                    y = y + 1
+                x = x + 1
+        else:
+            QMessageBox.information(self, '没有信息', '没有查询到信息！', QMessageBox.Close)
         cursor.close()
         conn.close()
 
@@ -304,13 +313,16 @@ class FifthWindow(QMainWindow):
             cursor.execute(DefaultSearch)
             vaccineOrderData = cursor.fetchall()
             print(vaccineOrderData)
-        x = 0
-        for i in vaccineOrderData:
-            y = 0
-            for j in i:
-                self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(vaccineOrderData[x][y])))
-                y = y + 1
-            x = x + 1
+        if vaccineOrderData:
+            x = 0
+            for i in vaccineOrderData:
+                y = 0
+                for j in i:
+                    self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(vaccineOrderData[x][y])))
+                    y = y + 1
+                x = x + 1
+        else:
+            QMessageBox.information(self, '没有信息', '没有查询到信息！', QMessageBox.Close)
         cursor.close()
         conn.close()
 
@@ -344,13 +356,17 @@ class SixthWindow(QMainWindow):
             InStorageData = cursor.fetchall()
             print(InStorageData)
             # TODO:前端表格中输出查询结果
-        x = 0
-        for i in InStorageData:
-            y = 0
-            for j in i:
-                self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(InStorageData[x][y])))
-                y = y + 1
-            x = x + 1
+
+        if InStorageData:
+            x = 0
+            for i in InStorageData:
+                y = 0
+                for j in i:
+                    self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(InStorageData[x][y])))
+                    y = y + 1
+                x = x + 1
+        else:
+            QMessageBox.information(self, '没有信息', '没有查询到信息！', QMessageBox.Close)
         cursor.close()
         conn.close()
 
@@ -385,13 +401,19 @@ class SeventhWindow(QMainWindow):
             warehouseData = cursor.fetchall()
             print(warehouseData)
             # TODO:前端表格输出查询结果
-        x = 0
-        for i in warehouseData:
-            y = 0
-            for j in i:
-                self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(warehouseData[x][y])))
-                y = y + 1
-            x = x + 1
+
+        if warehouseData:
+            x = 0
+            for i in warehouseData:
+                y = 0
+                for j in i:
+                    self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(warehouseData[x][y])))
+                    y = y + 1
+                x = x + 1
+
+        else:
+             QMessageBox.information(self, '没有信息', '没有查询到信息！', QMessageBox.Close)
+
         cursor.close()
         conn.close()
 
