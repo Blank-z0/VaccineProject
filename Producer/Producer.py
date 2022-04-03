@@ -1,7 +1,7 @@
 import sys
 import datetime
 
-from GetDBConn import ConnDB
+from PublicFunctions.GetDBConn import ConnDB
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QMessageBox
@@ -119,7 +119,7 @@ class SecondWindow(QMainWindow):
         # TODO:从前端输入ID
         # ProducerNo = input('输入生产商ID:')
         ProducerNo = self.ui.lineEdit.text()
-        GetLicenseSql = "SELECT * FROM `VaccineOrder` WHERE ProducerNo = %s"
+        GetLicenseSql = "SELECT HospitalNo,VaccineName,OrderAmount,OrderTime FROM `VaccineOrder` WHERE ProducerNo = %s"
         cursor.execute(GetLicenseSql, ProducerNo)
         VaccineOrder = cursor.fetchall()
         if VaccineOrder:

@@ -1,7 +1,8 @@
 import sys
 import datetime
 
-from GetDBConn import ConnDB
+from PublicFunctions.GetDBConn import ConnDB
+from PublicFunctions.DateJudgement import judgeDate
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QMessageBox
@@ -148,12 +149,16 @@ class SecondWindow(QMainWindow):
                     Minute = self.ui.lineEdit_8.text()
                     DateFlag = True
                     # 判断日期合法性
-
+                    date=Year+'-'+Month+'-'+Day
+                    '''
                     if int(Month) < 0 or int(Month) > 12:
                         DateFlag = False
                     if DateFlag:
                         if int(Day) < 0 or int(Day) > mon[int(Month) - 1]:
                             DateFlag = False
+                    '''
+                    if judgeDate(date)==False:
+                        DateFlag=False
                     if not (int(Hour) > 0 and int(Hour) < 24 and (int(Minute) > 0) and (int(Minute) < 60)):
                         DateFlag = False
                     if DateFlag == False:
@@ -401,7 +406,7 @@ class SixWindow(QMainWindow):
                     NextVaccineNo = VaccineNotmp + str(i)
                 cursor.execute(UpdateVaccineCountStatus, NextVaccineNo)
                 conn.commit()
-        QMessageBox.information(self, '成功', '购买成功', QMessageBox.Close)
+            QMessageBox.information(self, '成功', '购买成功', QMessageBox.Close)
         cursor.close()
         conn.close()
 
