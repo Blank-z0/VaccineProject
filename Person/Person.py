@@ -1,6 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from GetDBConn import ConnDB
+from PublicFunctions.GetDBConn import ConnDB
+from PublicFunctions.DateJudgement import judgeDate
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QMessageBox
@@ -236,12 +237,15 @@ class ThirdWindow(QMainWindow):
         else:
             Batch = 1
         print(Batch)
-        VaccinationInfoSql = "INSERT INTO `VaccinationInfo` VALUES (%s,%s,%s,%s,%s,%s,NULL,'未接种')"
-        cursor.executemany(VaccinationInfoSql, [(InfoID, PersonID, HospitalNo, VaccineNo, Batch, Date)])
-        conn.commit()
-        UpdateVaccineStatus = "UPDATE `Vaccine` SET Flag='已占用' WHERE VaccineNo = %s"
-        QMessageBox.information(self, '操作成功', '您已成功提交预约，请按时前往医院接种！', QMessageBox.Close)
-        cursor.execute(UpdateVaccineStatus, VaccineNo)
+        if judgeDate(Date):
+            VaccinationInfoSql = "INSERT INTO `VaccinationInfo` VALUES (%s,%s,%s,%s,%s,%s,NULL,'未接种')"
+            cursor.executemany(VaccinationInfoSql, [(InfoID, PersonID, HospitalNo, VaccineNo, Batch, Date)])
+            conn.commit()
+            UpdateVaccineStatus = "UPDATE `Vaccine` SET Flag='已占用' WHERE VaccineNo = %s"
+            QMessageBox.information(self, '操作成功', '您已成功提交预约，请按时前往医院接种！', QMessageBox.Close)
+            cursor.execute(UpdateVaccineStatus, VaccineNo)
+        else:
+            QMessageBox.information(self, '错误', '非法的接种日期', QMessageBox.Close)
         conn.commit()
         conn.close()
 

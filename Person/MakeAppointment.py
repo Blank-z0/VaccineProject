@@ -65,6 +65,7 @@ class Ui_MainWindow(object):
         self.lineEdit_3.setObjectName("lineEdit_3")
         self.lineEdit_4 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_4.setGeometry(QtCore.QRect(640, 330, 231, 41))
+        self.lineEdit_4.setPlaceholderText("请输入大于今日的合法日期")
         self.lineEdit_4.setObjectName("lineEdit_4")
         self.pushButton_4 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_4.setGeometry(QtCore.QRect(500, 400, 251, 61))

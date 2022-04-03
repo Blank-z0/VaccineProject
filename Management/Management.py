@@ -1,7 +1,7 @@
 import sys
 import datetime
 
-from GetDBConn import ConnDB
+from PublicFunctions.GetDBConn import ConnDB
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QMessageBox
