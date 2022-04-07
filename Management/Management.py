@@ -2,6 +2,7 @@ import sys
 import datetime
 
 from PublicFunctions.GetDBConn import ConnDB
+from PublicFunctions.DateJudgement import judgeDate
 from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QMessageBox
@@ -448,13 +449,49 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         # TODO:从前端获取信息
         conn = ConnDB()
         cursor = conn.cursor()
+        ProducerFlag=False
+        SupFlag=False
         SupNo = self.lineEdit.text()
         ProducerNo = self.lineEdit_2.text()
         LicenseDate = self.lineEdit_3.text()
         LicenseNo = 'L' + SupNo[1:3] + str(datetime.date.today().year)
+        FindAllProducerSql="SELECT ProducerNo FROM `Producer`"
+        FindAllSupSql="SELECT SupNo FROM `SupervisionDepart`"
+        cursor.execute(FindAllProducerSql)
+        AllProducer=cursor.fetchall()
+        cursor.execute(FindAllSupSql)
+        AllSup=cursor.fetchall()
+        #判断管理机构编号是否合法
+        for tmp in AllSup:
+            if SupNo in tmp:
+                SupFlag=True
+
+        if SupFlag==False:
+            #非法情况
+            QMessageBox.information(self, '失败', '管理机构ID非法！', QMessageBox.Close)
+            cursor.close()
+            conn.close()
+            return
+        #判断生产商编号是否合法
+        for tmp in AllProducer:
+            if ProducerNo in tmp:
+                ProducerFlag=True
+
+        if ProducerFlag==False:
+            #非法情况
+            QMessageBox.information(self, '失败', '生产商编号不存在！', QMessageBox.Close)
+            cursor.close()
+            conn.close()
+            return
+
+        #自动编号
         cursor.execute("SELECT LicenseNo FROM `ProducerLicense` WHERE SupNo=%s ORDER BY LicenseNo desc limit 1", SupNo)
-        NowLicenseNo = int(cursor.fetchall()[0][0][7:])
-        print(NowLicenseNo)
+        NowLicenseNo=cursor.fetchall()
+        if NowLicenseNo:
+            NowLicenseNo = int(cursor.fetchall()[0][0][7:])
+            print(NowLicenseNo)
+        else:
+            NowLicenseNo=0
         if NowLicenseNo + 1 < 10:
             LicenseNo = LicenseNo + '00' + str(NowLicenseNo + 1)
         elif int(NowLicenseNo + 1) < 100:
@@ -462,11 +499,15 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         else:
             LicenseNo = LicenseNo + str(NowLicenseNo + 1)
         InsertLicense = "INSERT INTO `ProducerLicense` VALUES(%s,%s,%s,%s)"
-        cursor.executemany(InsertLicense, [(LicenseNo, SupNo, ProducerNo, LicenseDate)])
-        conn.commit()
-        print('颁发成功!')
-        # TODO:前端弹出MessageBox提示颁发成功
-        QMessageBox.information(self, '成功', '生产许可证颁发成功！', QMessageBox.Close)
+        #日期判断 合法则颁发 否则失败
+        if judgeDate(LicenseDate):
+            cursor.executemany(InsertLicense, [(LicenseNo, SupNo, ProducerNo, LicenseDate)])
+            conn.commit()
+            print('颁发成功!')
+            # TODO:前端弹出MessageBox提示颁发成功
+            QMessageBox.information(self, '成功', '生产许可证颁发成功！', QMessageBox.Close)
+        else:
+            QMessageBox.information(self, '失败', '请检查输入的日期是否合法！', QMessageBox.Close)
         cursor.close()
         conn.close()
 
