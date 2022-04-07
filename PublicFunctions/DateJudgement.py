@@ -1,7 +1,12 @@
 import datetime
 def judgeDate(inputDate):
+    if inputDate=='':
+        return False
     today=datetime.datetime.today()
-    [year,month,day]=inputDate.split('-')
+    date=inputDate.split('-')
+    if not (len(date)==3):
+        return False
+    [year,month,day]=date
     monthDate=[0,31,28,31,30,31,30,31,31,30,31,30,31]
     if int(year)<0:
         return False
@@ -13,3 +18,7 @@ def judgeDate(inputDate):
     if stdDate<=today:
         return False    #必须大于今天的日期
     return True
+
+if __name__=="__main__":
+    date=input()
+    print(judgeDate(date))
