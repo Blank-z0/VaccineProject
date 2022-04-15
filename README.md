@@ -188,3 +188,14 @@ Management.py
 
   查询仓库存储信息的界面
 
+
+
+## 用户名和密码设计
+
+* 每个用户名和密码位于 xx用户/Admin 下，例如Hospital的用户名和密码位于 Hospital/Admin
+* 每个用户的用户名和数据库中的编号一致
+* Hospital Producer Management 用户的用户名和密码相同
+* 所有Person用户的用户名为其PersonID，密码默认为123456
+
+
+
