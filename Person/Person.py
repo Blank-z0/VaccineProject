@@ -70,10 +70,11 @@ class StartDesinger(QMainWindow):
 
         User = self.lineEdit.text()
         PasswordText = self.lineEdit_2.text()
+        '''
         if len(PasswordText) < 6:
             QMessageBox.information(None, 'Error', '        密码必须为六位     ')
             return
-
+        '''
         try:
             file = open('Admin/CaacUser' + User + '.txt', 'r')
         except Exception as e:

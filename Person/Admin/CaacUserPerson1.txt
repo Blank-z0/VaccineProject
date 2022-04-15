@@ -1,2 +1,0 @@
-User: Person1
-Password: 111111
