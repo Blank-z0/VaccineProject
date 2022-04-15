@@ -1,2 +1,0 @@
-User: Management1
-Password: 111111
