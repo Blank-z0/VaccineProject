@@ -488,7 +488,8 @@ class MyMainWindow(QMainWindow, Ui_MainWindow):
         cursor.execute("SELECT LicenseNo FROM `ProducerLicense` WHERE SupNo=%s ORDER BY LicenseNo desc limit 1", SupNo)
         NowLicenseNo=cursor.fetchall()
         if NowLicenseNo:
-            NowLicenseNo = int(cursor.fetchall()[0][0][7:])
+            #bug fix NowLicenseNo = int(cursor.fetchall()[0][0][7:])->NowLicenseNo=int(NowLicenseNo[0][0][7:])
+            NowLicenseNo = int(NowLicenseNo[0][0][7:])
             print(NowLicenseNo)
         else:
             NowLicenseNo=0
