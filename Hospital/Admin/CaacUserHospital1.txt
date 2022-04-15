@@ -1,2 +1,0 @@
-User: Hospital1
-Password: 111111

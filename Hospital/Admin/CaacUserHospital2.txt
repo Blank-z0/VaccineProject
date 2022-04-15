@@ -1,2 +1,0 @@
-User: Hospital2
-Password: 222222
