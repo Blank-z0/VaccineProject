@@ -1,2 +1,0 @@
-User: Producer1
-Password: 111111
