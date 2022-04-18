@@ -159,8 +159,9 @@ class SecondWindow(QMainWindow):
                     '''
                     if judgeDate(date)==False:
                         DateFlag=False
-                    if not (int(Hour) > 0 and int(Hour) < 24 and (int(Minute) > 0) and (int(Minute) < 60)):
-                        DateFlag = False
+                    if DateFlag:
+                        if not (int(Hour) > 0 and int(Hour) < 24 and (int(Minute) >= 0) and (int(Minute) < 60)):
+                            DateFlag = False
                     if DateFlag == False:
                         QMessageBox.information(self, '错误', '非法日期！', QMessageBox.Close)
                         return
@@ -174,6 +175,7 @@ class SecondWindow(QMainWindow):
                     conn.commit()
                     cursor.execute(UpdateVaccineStatusSql, InfoNo)
                     conn.commit()
+                    QMessageBox.information(self, '成功', '接种信息更新成功！', QMessageBox.Close)
                 elif Flag == '未接种':
                     UpdateFinishSql = "DELETE FROM `VaccinationInfo` WHERE InfoNo=%s"
                     UpdateVaccineStatusSql = "UPDATE `Vaccine` SET Flag='未使用' WHERE VaccineNo = (SELECT VaccineNo " \
@@ -182,6 +184,7 @@ class SecondWindow(QMainWindow):
                     conn.commit()
                     cursor.execute(UpdateFinishSql, InfoNo)
                     conn.commit()
+                    QMessageBox.information(self, '成功', '接种信息更新成功！', QMessageBox.Close)
                 else:
                     # TODO:MessageBox非法输入
                     QMessageBox.information(self, '错误', '非法输入！', QMessageBox.Close)
@@ -195,7 +198,7 @@ class SecondWindow(QMainWindow):
             # TODO:MessageBox 不存在接种信息
             QMessageBox.information(self, '错误', '不存在接种信息！', QMessageBox.Close)
             # pass
-        QMessageBox.information(self, '成功', '接种信息更新成功！', QMessageBox.Close)
+        #QMessageBox.information(self, '成功', '接种信息更新成功！', QMessageBox.Close)
         cursor.close()
         conn.close()
 
@@ -217,6 +220,9 @@ class ThirdWindow(QMainWindow):
         cursor = conn.cursor()
         # TODO:前端窗口输入HospitalNo
         HospitalNo = self.ui.lineEdit.text()
+        if HospitalNo=='':
+            QMessageBox.information(self, '错误', '输入不能为空！', QMessageBox.Close)
+            return
         GetWarehouseAreaSql = "SELECT * FROM `WarehouseArea` WHERE HospitalNo = %s"
         cursor.execute(GetWarehouseAreaSql, HospitalNo)
         WarehouseData = cursor.fetchall()
@@ -289,6 +295,9 @@ class FifthWindow(QMainWindow):
         cursor = conn.cursor()
         # TODO:前端窗口输入HospitalNo
         HospitalNo = self.ui.lineEdit.text()
+        if HospitalNo=='':
+            QMessageBox.information(self, '错误', '输入不能为空！', QMessageBox.Close)
+            return
         GetVaccineOrderSql = "SELECT * FROM `VaccineOrder` WHERE HospitalNo = %s"
         cursor.execute(GetVaccineOrderSql, HospitalNo)
         VaccineOrder = cursor.fetchall()
@@ -305,7 +314,8 @@ class FifthWindow(QMainWindow):
         else:
             # TODO:前端弹出MessageBox提示信息不存在
             QMessageBox.information(self, '错误', '信息不存在！', QMessageBox.Close)
-            pass
+            return
+            #pass
 
 
 class SixWindow(QMainWindow):
@@ -327,6 +337,9 @@ class SixWindow(QMainWindow):
         # TODO:前端窗口输入HospitalNo和VaccineName
         HospitalNo = self.ui.lineEdit.text()
         VaccineName = self.ui.lineEdit_2.text()
+        if HospitalNo=='' or VaccineName=='':
+            QMessageBox.information(self, '错误', '输入不能为空', QMessageBox.Close)
+            return
         GetVaccineAmountSql = "SELECT count(*) FROM `Vaccine` where VaccineName=%s and HospitalNo='无'"
         cursor.execute(GetVaccineAmountSql, VaccineName)
         AvaVaccineAmount = cursor.fetchall()[0][0]
@@ -340,12 +353,27 @@ class SixWindow(QMainWindow):
         # TODO:前端窗口输入HospitalNo和VaccineName
         HospitalNo = self.ui.lineEdit.text()
         VaccineName = self.ui.lineEdit_2.text()
+        cursor.execute("SELECT HospitalNo FROM `Hospital`")
+        AllHospitalNo=cursor.fetchall()
+        #print(AllHospitalNo)
+        #输入合法性检查
+        if HospitalNo=='' or VaccineName=='':
+            QMessageBox.information(self, '错误', '输入不能为空', QMessageBox.Close)
+            return
+        if (HospitalNo,) not in AllHospitalNo:
+            QMessageBox.information(self, '错误', '医院ID非法', QMessageBox.Close)
+            return
+
         GetVaccineAmountSql = "SELECT count(*) FROM `Vaccine` where VaccineName=%s and HospitalNo='无'"
         cursor.execute(GetVaccineAmountSql, VaccineName)
         AvaVaccineAmount = cursor.fetchall()[0][0]
         # TODO:将AvaVaccineAmount显示到前端
         # self.ui.tableWidget.setItem(x, y, QtWidgets.QTableWidgetItem(str(VaccineOrder[x][y])))
         print('可用疫苗:' + str(AvaVaccineAmount))
+        OrderAmount=self.ui.lineEdit_3.text()
+        if OrderAmount=='':
+            QMessageBox.information(self, '错误', '输入不能为空', QMessageBox.Close)
+            return
         OrderAmount = int(self.ui.lineEdit_3.text())
 
         if OrderAmount > int(AvaVaccineAmount):
