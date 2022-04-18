@@ -7,6 +7,8 @@ def judgeDate(inputDate):
     if not (len(date)==3):
         return False
     [year,month,day]=date
+    if year=='' or month=='' or day=='':
+        return False
     monthDate=[0,31,28,31,30,31,30,31,31,30,31,30,31]
     if int(year)<0:
         return False
