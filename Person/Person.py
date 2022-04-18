@@ -156,7 +156,14 @@ class ThirdWindow(QMainWindow):
         # 输出: 提交接种预约信息成功返回True 失败返回False
         # 提交个人接种预约信息
         # TODO:在前端输入以下信息
+        PersonID = self.ui.lineEdit.text()
         VaccineName = self.ui.lineEdit_2.text()
+        if PersonID=='':
+            QMessageBox.information(self, '错误', '个人编号不能为空', QMessageBox.Close)
+            return
+        if VaccineName=='':
+            QMessageBox.information(self, '错误', '疫苗名称不能为空', QMessageBox.Close)
+            return
         conn = ConnDB()
         cursor = conn.cursor()
         FindHospitalSql = "SELECT DISTINCT Hospital.HospitalNo,Hospital.HospitalName FROM `Hospital` LEFT JOIN " \
@@ -177,8 +184,8 @@ class ThirdWindow(QMainWindow):
             print(AvaHospital)
         else:
             # TODO:前端弹出MessageBox提示已经没有足够疫苗
-            QMessageBox.information(self, '错误', '已经没有足够的疫苗', QMessageBox.Close)
-            pass
+            QMessageBox.information(self, '抱歉', '已经没有此类疫苗可供接种', QMessageBox.Close)
+            #pass
 
     def SubmitNewVaccinationInfo(self):
         # 参数:self
@@ -190,6 +197,14 @@ class ThirdWindow(QMainWindow):
         PersonID = self.ui.lineEdit.text()
         HospitalNo = self.ui.lineEdit_3.text()
         Date = self.ui.lineEdit_4.text()
+        #非法判断，不允许输入为空
+        if PersonID=='':
+            QMessageBox.information(self, '错误', '个人编号不能为空', QMessageBox.Close)
+            return
+        if VaccineName=='':
+            QMessageBox.information(self, '错误', '疫苗名称不能为空', QMessageBox.Close)
+            return
+
         conn = ConnDB()
         cursor = conn.cursor()
         FindHospitalSql = "SELECT DISTINCT Hospital.HospitalNo,Hospital.HospitalName FROM `Hospital` LEFT JOIN " \
@@ -197,59 +212,62 @@ class ThirdWindow(QMainWindow):
                           "Vaccine.Flag='未使用' "
         cursor.execute(FindHospitalSql, VaccineName)
         AvaHospital = cursor.fetchall()
-        # TODO:输入个人ID和欲接种疫苗后弹出窗口显示可选医院/显示没有足够的疫苗
-        Flag = False
-        for hospital in AvaHospital:
-            print(hospital[0])
-            if HospitalNo == hospital[0]:
-                Flag = True
-        if not Flag:
-            # TODO:前端弹出MessageBox提示医院编号不合法
-            QMessageBox.information(self, '错误', '医院编号信息不合法', QMessageBox.Close)
-            return
+        if AvaHospital:
+            # TODO:输入个人ID和欲接种疫苗后弹出窗口显示可选医院/显示没有足够的疫苗
+            Flag = False
+            for hospital in AvaHospital:
+                print(hospital[0])
+                if HospitalNo == hospital[0]:
+                    Flag = True
+            if not Flag:
+                # TODO:前端弹出MessageBox提示医院编号不合法
+                QMessageBox.information(self, '错误', '医院编号信息不合法', QMessageBox.Close)
+                return
 
-        GetVaccineNoSql = "SELECT VaccineNo FROM `Vaccine` WHERE HospitalNo=%s AND Flag='未使用' AND VaccineName=%s order by VaccineNo asc " \
-                          "limit 1 "
-        cursor.executemany(GetVaccineNoSql, [(HospitalNo,VaccineName)])
-        VaccineNo = cursor.fetchall()[0][0]
-        print(VaccineNo)
-        #Date = self.ui.lineEdit_4.text()
-        #VaccineName = self.ui.lineEdit_2.text()
-        InfoIDSql = "SELECT InfoNo FROM `VaccinationInfo` order by InfoNo desc limit 1"
-        BatchIDSql = "SELECT Batch FROM `VaccinationInfo` LEFT JOIN `Vaccine` ON " \
-                     "VaccinationInfo.VaccineNo=Vaccine.VaccineNo WHERE PersonID=%s AND Vaccine.VaccineName=%s order " \
-                     "by Batch desc limit 1 "
-        cursor.execute(InfoIDSql)
-        InfoID = cursor.fetchall()[0][0]
-        InfoIDNumber = int(InfoID[6:]) + 1
-        if InfoIDNumber < 10:
-            InfoID = InfoID[0:6] + '000' + str(InfoIDNumber)
-        elif InfoIDNumber < 100:
-            InfoID = InfoID[0:6] + '00' + str(InfoIDNumber)
-        elif InfoIDNumber < 1000:
-            InfoID = InfoID[0:6] + '0' + str(InfoIDNumber)
-        else:
-            InfoID = InfoID[0:6] + str(InfoIDNumber)
-        print(InfoID)
-        cursor.executemany(BatchIDSql, [(PersonID, VaccineName)])
-        Batch = cursor.fetchall()
-        if Batch:
-            Batch = int(Batch[0][0]) + 1
-        else:
-            Batch = 1
-        print(Batch)
-        if judgeDate(Date):
-            VaccinationInfoSql = "INSERT INTO `VaccinationInfo` VALUES (%s,%s,%s,%s,%s,%s,NULL,'未接种')"
-            cursor.executemany(VaccinationInfoSql, [(InfoID, PersonID, HospitalNo, VaccineNo, Batch, Date)])
+            GetVaccineNoSql = "SELECT VaccineNo FROM `Vaccine` WHERE HospitalNo=%s AND Flag='未使用' AND VaccineName=%s order by VaccineNo asc " \
+                              "limit 1 "
+            cursor.executemany(GetVaccineNoSql, [(HospitalNo,VaccineName)])
+            VaccineNo = cursor.fetchall()[0][0]
+            print(VaccineNo)
+            #Date = self.ui.lineEdit_4.text()
+            #VaccineName = self.ui.lineEdit_2.text()
+            InfoIDSql = "SELECT InfoNo FROM `VaccinationInfo` order by InfoNo desc limit 1"
+            BatchIDSql = "SELECT Batch FROM `VaccinationInfo` LEFT JOIN `Vaccine` ON " \
+                         "VaccinationInfo.VaccineNo=Vaccine.VaccineNo WHERE PersonID=%s AND Vaccine.VaccineName=%s order " \
+                         "by Batch desc limit 1 "
+            cursor.execute(InfoIDSql)
+            InfoID = cursor.fetchall()[0][0]
+            InfoIDNumber = int(InfoID[6:]) + 1
+            if InfoIDNumber < 10:
+                InfoID = InfoID[0:6] + '000' + str(InfoIDNumber)
+            elif InfoIDNumber < 100:
+                InfoID = InfoID[0:6] + '00' + str(InfoIDNumber)
+            elif InfoIDNumber < 1000:
+                InfoID = InfoID[0:6] + '0' + str(InfoIDNumber)
+            else:
+                InfoID = InfoID[0:6] + str(InfoIDNumber)
+            print(InfoID)
+            cursor.executemany(BatchIDSql, [(PersonID, VaccineName)])
+            Batch = cursor.fetchall()
+            if Batch:
+                Batch = int(Batch[0][0]) + 1
+            else:
+                Batch = 1
+            print(Batch)
+            if judgeDate(Date):
+                VaccinationInfoSql = "INSERT INTO `VaccinationInfo` VALUES (%s,%s,%s,%s,%s,%s,NULL,'未接种')"
+                cursor.executemany(VaccinationInfoSql, [(InfoID, PersonID, HospitalNo, VaccineNo, Batch, Date)])
+                conn.commit()
+                UpdateVaccineStatus = "UPDATE `Vaccine` SET Flag='已占用' WHERE VaccineNo = %s"
+                QMessageBox.information(self, '操作成功', '您已成功提交预约，请按时前往医院接种！', QMessageBox.Close)
+                cursor.execute(UpdateVaccineStatus, VaccineNo)
+            else:
+                QMessageBox.information(self, '错误', '非法的接种日期', QMessageBox.Close)
             conn.commit()
-            UpdateVaccineStatus = "UPDATE `Vaccine` SET Flag='已占用' WHERE VaccineNo = %s"
-            QMessageBox.information(self, '操作成功', '您已成功提交预约，请按时前往医院接种！', QMessageBox.Close)
-            cursor.execute(UpdateVaccineStatus, VaccineNo)
+            conn.close()
         else:
-            QMessageBox.information(self, '错误', '非法的接种日期', QMessageBox.Close)
-        conn.commit()
-        conn.close()
-
+            QMessageBox.information(self, '抱歉', '已经没有此类疫苗供接种', QMessageBox.Close)
+            return
 
 class MyMainWindow(QMainWindow, Ui_MainWindow):
     def slot1(self):
