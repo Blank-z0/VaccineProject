@@ -198,6 +198,14 @@ class FourthWindow(QMainWindow):
         # VaccineName = input('输入要生产的疫苗名称:')
         ProducerNo = self.ui.lineEdit.text()
         VaccineName = self.ui.lineEdit_2.text()
+        if ProducerNo == '' or VaccineName=='':
+            QMessageBox.information(self, '错误', '信息不可为空', QMessageBox.Close)
+            return
+        cursor.execute("SELECT ProducerNo FROM `Producer`")
+        AllProducer=cursor.fetchall()
+        if (ProducerNo,) not in AllProducer:
+            QMessageBox.information(self, '错误', '非法ID', QMessageBox.Close)
+            return
         print(ProducerNo)
         print(VaccineName)
         GetLicenseDateSql = "SELECT LicenseDate FROM `ProducerLicense` WHERE ProducerNo = %s ORDER BY LicenseDate DESC LIMIT 1"
@@ -206,6 +214,10 @@ class FourthWindow(QMainWindow):
         [year, month, day] = str(LicenseDate).split('-')
         print(year + month + day)
         date = year + '-' + month + '-' + day
+        PrduceAmount = self.ui.lineEdit_3.text()
+        if PrduceAmount == '':
+            QMessageBox.information(self, '错误', '产量不可为空', QMessageBox.Close)
+            return
         ProduceAmount = int(self.ui.lineEdit_3.text())
         print(ProduceAmount)
         if datetime.datetime.today() > datetime.datetime.strptime(date, "%Y-%m-%d"):
