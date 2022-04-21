@@ -376,6 +376,12 @@ class SixWindow(QMainWindow):
             return
         OrderAmount = int(self.ui.lineEdit_3.text())
 
+        cursor.execute("SELECT VaccineName from `WarehouseArea` WHERE HospitalNo=%s",HospitalNo)
+        allWarhouseVaccine=cursor.fetchall()
+        if (VaccineName,) not in allWarhouseVaccine:
+            QMessageBox.information(self, '非法操作', '您没有对应储存疫苗的仓库，无权购买！', QMessageBox.Close)
+            return
+
         if OrderAmount > int(AvaVaccineAmount):
             # TODO:前端弹出MessageBox提示超过现有疫苗上限
             print('超过现有疫苗上限!')
